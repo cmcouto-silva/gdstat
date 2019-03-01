@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1551452104481.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "E9C5C7DE",
+    "lastKnownWriteTime" : 1551449041,
+    "last_content_update" : 1551449041,
+    "path" : "~/cmcouto.silva@usp.br/R/packages/gdstat_tmp/workflow_example.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "7,0",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

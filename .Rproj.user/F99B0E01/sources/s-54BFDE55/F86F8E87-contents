@@ -1,0 +1,11 @@
+plot.position <- function(data, col_name = 'PBS') {
+  dt <- data.table::copy(data)
+  nchr <- length(dt[, unique(CHR)])
+  pos_shift <- dt[, round(0.2 * .N / NCHR)]
+
+  pos <- dt[, .GRP, keyby = .(CHR, POS)]
+  ppos <- pos[, GRP + (CHR - 1L) * pos_shift]
+
+  return(ppos)
+
+}

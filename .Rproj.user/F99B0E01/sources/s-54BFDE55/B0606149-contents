@@ -1,0 +1,183 @@
+#### Get List of SNP on target-genes ####
+####################################################################################################!
+
+# Setting WD
+setwd("~/cmcouto.silva@usp.br/lab_files/phd_data/rehh_current/rehh_grch38/")
+
+NOS1AP <- NCBI2R::GetSNPsInGenes(9722, MaxRet = 100000)
+NEB <- NCBI2R::GetSNPsInGenes(4703, MaxRet = 100000)
+ARL5A <- NCBI2R::GetSNPsInGenes(26225, MaxRet = 100000)
+PPP3CA <- NCBI2R::GetSNPsInGenes(5530, MaxRet = 100000)
+DOCK2 <- NCBI2R::GetSNPsInGenes(1794, MaxRet = 100000)
+IPCEF1 <- NCBI2R::GetSNPsInGenes(26034, MaxRet = 100000)
+SAMD12 <- NCBI2R::GetSNPsInGenes(401474, MaxRet = 120000)
+MEGF11 <- NCBI2R::GetSNPsInGenes(84465, MaxRet = 100000)
+SLC37A1 <- NCBI2R::GetSNPsInGenes(54020, MaxRet = 100000)
+HS3ST2 <- NCBI2R::GetSNPsInGenes(9956, MaxRet = 100000)
+USP31 <- NCBI2R::GetSNPsInGenes(57478, MaxRet = 100000)
+CCL11 <- NCBI2R::GetSNPsInGenes(6356, MaxRet = 100000)
+CCL8 <- NCBI2R::GetSNPsInGenes(6355, MaxRet = 100000)
+CNKR3 <- NCBI2R::GetSNPsInGenes(154043, MaxRet = 100000)
+
+# Available SNPs
+av_snps <- readLines("snps/allsnps.txt")
+
+
+av_snps.c2 <- c(
+  av_snps[av_snps %in% NOS1AP] %>% length(),
+  av_snps[av_snps %in% NEB] %>% length(),
+  av_snps[av_snps %in% ARL5A] %>% length(),
+  av_snps[av_snps %in% PPP3CA] %>% length(),
+  av_snps[av_snps %in% DOCK2] %>% length(),
+  av_snps[av_snps %in% IPCEF1] %>% length(),
+  av_snps[av_snps %in% SAMD12] %>% length(),
+  av_snps[av_snps %in% MEGF11] %>% length(),
+  av_snps[av_snps %in% SLC37A1] %>% length(),
+  av_snps[av_snps %in% HS3ST2] %>% length(),
+  av_snps[av_snps %in% USP31] %>% length(),
+  av_snps[av_snps %in% CCL11] %>% length(),
+  av_snps[av_snps %in% CCL8] %>% length(),
+  av_snps[av_snps %in% CNKR3] %>% length()
+)
+
+#### iHS ####
+####################################################################################################!
+
+amz_ihs <- fread("rehh_out/ihs/tables/NAM.stat.csv") %>%
+  setnames("V1", "SNP")
+
+amz_ihs[SNP %in% NOS1AP] #2
+amz_ihs[SNP %in% NEB] #6
+amz_ihs[SNP %in% ARL5A] #0
+amz_ihs[SNP %in% PPP3CA] #6
+amz_ihs[SNP %in% DOCK2] #5
+amz_ihs[SNP %in% IPCEF1] #0
+amz_ihs[SNP %in% SAMD12] #1
+amz_ihs[SNP %in% MEGF11] #4
+amz_ihs[SNP %in% SLC37A1] #0
+amz_ihs[SNP %in% HS3ST2] #0
+amz_ihs[SNP %in% USP31] #0
+amz_ihs[SNP %in% CCL11] #0
+amz_ihs[SNP %in% CCL8] #0
+amz_ihs[SNP %in% CNKR3] #0
+
+#### XP-EHH ####
+####################################################################################################!
+
+## Amazonians vs Mesoamericans
+amz_mes_xpehh <- fread("rehh_out/xpehh/tables/NAM.vs.MES.xpehh.uni.stat.csv") %>%
+  setnames("V1", "SNP")
+
+amz_mes_xpehh[SNP %in% NOS1AP] #22
+amz_mes_xpehh[SNP %in% NEB] #26
+amz_mes_xpehh[SNP %in% ARL5A] #8
+amz_mes_xpehh[SNP %in% PPP3CA] #51
+amz_mes_xpehh[SNP %in% DOCK2] #50
+amz_mes_xpehh[SNP %in% IPCEF1] #3
+amz_mes_xpehh[SNP %in% SAMD12] #26
+amz_mes_xpehh[SNP %in% MEGF11] #65
+amz_mes_xpehh[SNP %in% SLC37A1] #0
+amz_mes_xpehh[SNP %in% HS3ST2] #1
+amz_mes_xpehh[SNP %in% USP31] #0
+amz_mes_xpehh[SNP %in% CCL11] #0
+amz_mes_xpehh[SNP %in% CCL8] #0
+amz_mes_xpehh[SNP %in% CNKR3] #7
+
+## Amazonians vs Siberians
+amz_sib_xpehh <- fread("rehh_out/xpehh/tables/NAM.vs.SIB.xpehh.uni.stat.csv") %>%
+  setnames("V1", "SNP")
+
+amz_sib_xpehh[SNP %in% NOS1AP] #7
+amz_sib_xpehh[SNP %in% NEB] #27
+amz_sib_xpehh[SNP %in% ARL5A] #8
+amz_sib_xpehh[SNP %in% PPP3CA] #21
+amz_sib_xpehh[SNP %in% DOCK2] #57
+amz_sib_xpehh[SNP %in% IPCEF1] #17
+amz_sib_xpehh[SNP %in% SAMD12] #0
+amz_sib_xpehh[SNP %in% MEGF11] #37
+amz_sib_xpehh[SNP %in% SLC37A1] #30
+amz_sib_xpehh[SNP %in% HS3ST2] #1
+amz_sib_xpehh[SNP %in% USP31] #0
+amz_sib_xpehh[SNP %in% CCL11] #0
+amz_sib_xpehh[SNP %in% CCL8] #0
+amz_sib_xpehh[SNP %in% CNKR3] #0
+
+## Amazonians vs East Asians
+amz_eas_xpehh <- fread("rehh_out/xpehh/tables/NAM.vs.EAS.xpehh.uni.stat.csv") %>%
+  setnames("V1", "SNP")
+
+amz_eas_xpehh[SNP %in% NOS1AP] #7
+amz_eas_xpehh[SNP %in% NEB] #39
+amz_eas_xpehh[SNP %in% ARL5A] #5
+amz_eas_xpehh[SNP %in% PPP3CA] #16
+amz_eas_xpehh[SNP %in% DOCK2] #61
+amz_eas_xpehh[SNP %in% IPCEF1] #10
+amz_eas_xpehh[SNP %in% SAMD12] #17
+amz_eas_xpehh[SNP %in% MEGF11] #45
+amz_eas_xpehh[SNP %in% SLC37A1] #13
+amz_eas_xpehh[SNP %in% HS3ST2] #1
+amz_eas_xpehh[SNP %in% USP31] #0
+amz_eas_xpehh[SNP %in% CCL11] #0
+amz_eas_xpehh[SNP %in% CCL8] #0
+amz_eas_xpehh[SNP %in% CNKR3] #0
+
+#### Rsb ####
+####################################################################################################!
+
+## Amazonians vs Mesoamericans
+amz_mes_rsb <- fread("rehh_out/rsb/tables/NAM.vs.MES.rsb.uni.stat.csv") %>%
+  setnames("V1", "SNP")
+
+amz_mes_rsb[SNP %in% NOS1AP] #25
+amz_mes_rsb[SNP %in% NEB] #9
+amz_mes_rsb[SNP %in% ARL5A] #7
+amz_mes_rsb[SNP %in% PPP3CA] #55
+amz_mes_rsb[SNP %in% DOCK2] #38
+amz_mes_rsb[SNP %in% IPCEF1] #3
+amz_mes_rsb[SNP %in% SAMD12] #19
+amz_mes_rsb[SNP %in% MEGF11] #74
+amz_mes_rsb[SNP %in% SLC37A1] #0
+amz_mes_rsb[SNP %in% HS3ST2] #0
+amz_mes_rsb[SNP %in% USP31] #0
+amz_mes_rsb[SNP %in% CCL11] #0
+amz_mes_rsb[SNP %in% CCL8] #0
+amz_mes_rsb[SNP %in% CNKR3] #3
+
+## Amazonians vs Siberians
+amz_sib_rsb <- fread("rehh_out/rsb/tables/NAM.vs.SIB.rsb.uni.stat.csv") %>%
+  setnames("V1", "SNP")
+
+amz_sib_rsb[SNP %in% NOS1AP] #6
+amz_sib_rsb[SNP %in% NEB] #27
+amz_sib_rsb[SNP %in% ARL5A] #8
+amz_sib_rsb[SNP %in% PPP3CA] #33
+amz_sib_rsb[SNP %in% DOCK2] #78
+amz_sib_rsb[SNP %in% IPCEF1] #9
+amz_sib_rsb[SNP %in% SAMD12] #2
+amz_sib_rsb[SNP %in% MEGF11] #53
+amz_sib_rsb[SNP %in% SLC37A1] #31
+amz_sib_rsb[SNP %in% HS3ST2] #0
+amz_sib_rsb[SNP %in% USP31] #0
+amz_sib_rsb[SNP %in% CCL11] #0
+amz_sib_rsb[SNP %in% CCL8] #0
+amz_sib_rsb[SNP %in% CNKR3] #0
+
+## Amazonians vs East Asians
+amz_eas_rsb <- fread("rehh_out/rsb/tables/NAM.vs.EAS.rsb.uni.stat.csv") %>%
+  setnames("V1", "SNP")
+
+amz_eas_rsb[SNP %in% NOS1AP] #4
+amz_eas_rsb[SNP %in% NEB] #36
+amz_eas_rsb[SNP %in% ARL5A] #7
+amz_eas_rsb[SNP %in% PPP3CA] #24
+amz_eas_rsb[SNP %in% DOCK2] #73
+amz_eas_rsb[SNP %in% IPCEF1] #8
+amz_eas_rsb[SNP %in% SAMD12] #7
+amz_eas_rsb[SNP %in% MEGF11] #62
+amz_eas_rsb[SNP %in% SLC37A1] #11
+amz_eas_rsb[SNP %in% HS3ST2] #0
+amz_eas_rsb[SNP %in% USP31] #0
+amz_eas_rsb[SNP %in% CCL11] #0
+amz_eas_rsb[SNP %in% CCL8] #0
+amz_eas_rsb[SNP %in% CNKR3] #0
+
