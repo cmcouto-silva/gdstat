@@ -1,4 +1,4 @@
-function (snpIDs, batchsize = 250L, rm.loc = F) {
+snp.annot <- function (snpIDs, batchsize = 250L, rm.loc = F) {
 
   if (!is.numeric(length(snpIDs)) || length(snpIDs) == 0)
     stop("Length of SNP vector must be equal or greater than 1.")
