@@ -6,18 +6,20 @@
 #' 
 #' @param data description
 #' @param mplot description
-#' @param maxv_per_chr description
-#' @param all_peakv description
+#' @param method description
 #' 
 #' @return description
 #' 
 #' @import data.table ggplot2
 #' @export
 
-mplot.add.genes <- function(data, mplot, maxv_per_chr = T, all_peakv = T) {
+mplot.add.genes <- function(data, mplot, method = 'maxv_per_chr') {
   
   if(!any(grepl("GENE", colnames(data))))
     stop("GENE column not found.")
+  
+  if(!method %in% c('maxv_per_chr', 'all_peakv'))
+    stop("Method must be 'maxv_per_chr' or 'all_peakv'.")
   
   if(maxv_per_chr) {
     
@@ -28,12 +30,10 @@ mplot.add.genes <- function(data, mplot, maxv_per_chr = T, all_peakv = T) {
     maxv_per_chr <- maxv_per_chr[mplot$data][!is.na(GENE)]
     
     # Plot genes
-    mplot +
+    x <- mplot +
       ggrepel::geom_label_repel(data = maxv_per_chr, mapping = aes(x = position, y = PBS),
                                 label = maxv_per_chr[, GENE], size = 3L, vjust = 1)
-  }
-  
-  if(all_peakv) {
+  } else {
     
     # Getting all peak values
     all_peakv <- copy(pbs_mean_peaks)
