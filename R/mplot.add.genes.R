@@ -21,7 +21,7 @@ mplot.add.genes <- function(data, mplot, method = 'maxv_per_chr') {
   if(!method %in% c('maxv_per_chr', 'all_peakv'))
     stop("Method must be 'maxv_per_chr' or 'all_peakv'.")
   
-  if(maxv_per_chr) {
+  if(method == 'maxv_per_chr') {
     
     # Getting max values per chromosome
     maxv_per_chr <- pbs_mean_peaks[pbs_mean_peaks[, .I[which.max(PBS)], by = CHR]$V1]
