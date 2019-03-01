@@ -30,7 +30,7 @@ mplot.add.genes <- function(data, mplot, method = 'maxv_per_chr') {
     maxv_per_chr <- maxv_per_chr[mplot$data][!is.na(GENE)]
     
     # Plot genes
-    x <- mplot +
+    mplot +
       ggrepel::geom_label_repel(data = maxv_per_chr, mapping = aes(x = position, y = PBS),
                                 label = maxv_per_chr[, GENE], size = 3L, vjust = 1)
   } else {
