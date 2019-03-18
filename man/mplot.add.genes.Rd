@@ -11,7 +11,7 @@ mplot.add.genes(data, mplot, maxv_per_chr = T, all_peakv = T)
 
 \item{mplot}{description}
 
-\item{method}{description}
+\item{method}{maxv_per_chr or all_peakv}
 }
 \value{
 description

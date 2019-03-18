@@ -6,7 +6,7 @@
 #' 
 #' @param data description
 #' @param mplot description
-#' @param method description
+#' @param method maxv_per_chr or all_peakv
 #' 
 #' @return description
 #' 
@@ -24,7 +24,7 @@ mplot.add.genes <- function(data, mplot, method = 'maxv_per_chr') {
   if(method == 'maxv_per_chr') {
     
     # Getting max values per chromosome
-    maxv_per_chr <- pbs_mean_peaks[pbs_mean_peaks[, .I[which.max(PBS)], by = CHR]$V1]
+    maxv_per_chr <- data[data[, .I[which.max(PBS)], by = CHR]$V1]
     setkey(mplot$data, CHR, CM, POS, SNP, PBS)
     setkey(maxv_per_chr, CHR, CM, POS, SNP, PBS)
     maxv_per_chr <- maxv_per_chr[mplot$data][!is.na(GENE)]
@@ -36,7 +36,7 @@ mplot.add.genes <- function(data, mplot, method = 'maxv_per_chr') {
   } else {
     
     # Getting all peak values
-    all_peakv <- copy(pbs_mean_peaks)
+    all_peakv <- copy(data)
     setkey(all_peakv, CHR, CM, POS, SNP, PBS)
     setkey(mplot$data, CHR, CM, POS, SNP, PBS)
     all_peakv <- all_peakv[mplot$data][!is.na(GENE)]
