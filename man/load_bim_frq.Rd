@@ -2,20 +2,21 @@
 % Please edit documentation in R/load_bim_frq.R
 \name{load_bim_frq}
 \alias{load_bim_frq}
-\title{Title}
+\title{Load Plink files (.bim and .strat.frq)}
 \usage{
 load_bim_frq(file_path, bim, frq)
 }
 \arguments{
-\item{file_path}{description}
+\item{file_path}{File path to file (without extensions).}
 
-\item{bim}{description}
+\item{bim}{Scalar character. File path to .bim file.}
 
-\item{frq}{description}
+\item{frq}{Scalar character. File path to .strat.frq file.}
 }
 \value{
-description
+list with SNP abd allele frequecy data.
 }
 \description{
-Description
+Load SNP and allele frequency Plink data (.bim and .strat.frq, respectivelly), and save them as a list 
+which is required for running further functinons.
 }

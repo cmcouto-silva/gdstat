@@ -1,12 +1,12 @@
-#' Title
+#' Fst from Reynolds, Weir, and Cockerham (1983)
 #' 
 #' Description
 #' 
 #' @usage reynolds_fst(allele.freq, pop1, pop2)
 #' 
-#' @param allele.freq description
-#' @param pop1 description
-#' @param pop2 description
+#' @param allele.freq Object from class 'gdinput', obtained by the function "load_bim_frq".
+#' @param pop1 Population ID in the CLST field for population 1.
+#' @param pop2 Population ID in the CLST field for population 2.
 #' 
 #' @return description
 #' 

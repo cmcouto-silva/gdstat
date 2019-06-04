@@ -33,7 +33,7 @@ pbs_fst <- function(geno.info, focal, close, outgroup, monomorphic_removal = T, 
                     outgroup = geno.info$frq[CLST == outgroup, MAF]
   )
 
-  # Removin monomorphic alleles in at least two populations
+  # Removing monomorphic alleles in at least two populations
   if(monomorphic_removal == TRUE) {
 
     m0 <- frq[, lapply(.SD, function(.) . == 0L)][, I := .I]

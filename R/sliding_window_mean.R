@@ -28,7 +28,7 @@ sliding_window_mean_dt <- function(dt, col_name, window_size = 20, slide = 5){
   csum <- c(0L, cumsum(as.numeric(dt[[col_name]])))
   
   pbs_mean <- (csum[idx1] - csum[idx2]) / window_size
-  dt <- dt[idx1]
+  dt <- dt[idx2][, W_ID := .I][]
   dt[, grep(col_name, colnames(dt), fixed = T) := pbs_mean][]
 
   return(dt)

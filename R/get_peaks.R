@@ -39,4 +39,6 @@ get_peaks <- function(data, quantile = 0.999, snp.annot = TRUE, rm.loc = TRUE) {
     data[GENE == "", GENE := NA][]
   }
 
+  return(data)
+  
 }

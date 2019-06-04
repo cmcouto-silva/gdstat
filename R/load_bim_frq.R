@@ -1,14 +1,15 @@
-#' Title
+#' @title Load Plink files (.bim and .strat.frq)
 #' 
-#' Description
+#' @description Load SNP and allele frequency Plink data (.bim and .strat.frq, respectivelly), and save them as a list 
+#' which is required for running further functinons.
 #' 
 #' @usage load_bim_frq(file_path, bim, frq)
 #' 
-#' @param file_path description
-#' @param bim description
-#' @param frq description
+#' @param file_path File path to file (without extensions).
+#' @param bim Scalar character. File path to .bim file. 
+#' @param frq Scalar character. File path to .strat.frq file.
 #' 
-#' @return description
+#' @return list with SNP abd allele frequecy data.
 #' 
 #' @export
 
