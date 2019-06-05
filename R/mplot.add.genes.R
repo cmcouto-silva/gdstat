@@ -6,47 +6,45 @@
 #' 
 #' @param data description
 #' @param mplot description
-#' @param method maxv_per_chr or all_peakv
+#' @param gene_col description
+#' @param merge_col description
+#' @param by description
+#' @param label geom_text_repel or geom_label_repel
 #' 
 #' @return description
 #' 
 #' @import data.table ggplot2
 #' @export
 
-mplot.add.genes <- function(data, mplot, method = 'maxv_per_chr') {
+mplot.add.genes <- function(data, mplot, gene_col = "GENE", merge_col = "W_ID", by = "CHR", label = "geom_label_repel") {
   
-  if(!any(grepl("GENE", colnames(data))))
-    stop("GENE column not found.")
+  # if(!any(grepl(col, colnames(data)))) {
+  #   stop("Column name does not match with any column in data.")
+  # }
+  # 
+  # if(!any(grepl(merge_col, colnames(data)))) {
+  #   stop("Invalid column name passed on 'merge_col'.")
+  # }
   
-  if(!method %in% c('maxv_per_chr', 'all_peakv'))
-    stop("Method must be 'maxv_per_chr' or 'all_peakv'.")
+  if (!label %in% c("geom_text_repel", "geom_label_repel")){
+    stop('Ony "geom_text_repel" and "geom_label_repel" can be specified in the label parameter.')
+  }
   
-  if(method == 'maxv_per_chr') {
-    
-    # Getting max values per chromosome
-    maxv_per_chr <- data[data[, .I[which.max(PBS)], by = CHR]$V1]
-    setkey(mplot$data, CHR, CM, POS, SNP, PBS)
-    setkey(maxv_per_chr, CHR, CM, POS, SNP, PBS)
-    maxv_per_chr <- maxv_per_chr[mplot$data][!is.na(GENE)]
-    
-    # Plot genes
+  y.axis <- as.character(mplot$mapping$y[2])
+  mgplot <- merge(mplot$data, data[, .SD,, .SDcols = c(merge_col, gene_col)], by = merge_col, sort = F)
+  mgplot <- mgplot[mgplot[, .I[which.max(get(y.axis))], by = by]$V1]
+  
+  # Plot genes
+  if(label == "geom_text_repel") {
     mplot +
-      ggrepel::geom_label_repel(data = maxv_per_chr, mapping = aes(x = position, y = PBS),
-                                label = maxv_per_chr[, GENE], size = 3L, vjust = 1)
+      ggrepel::geom_text_repel(data = mgplot, mapping = aes(x = position, y = get(y.axis)),
+                               label = mgplot[, get(gene_col)], size = 2.5,
+                               vjust = 0.8, nudge_x = -0.35)
   } else {
-    
-    # Getting all peak values
-    all_peakv <- copy(data)
-    setkey(all_peakv, CHR, CM, POS, SNP, PBS)
-    setkey(mplot$data, CHR, CM, POS, SNP, PBS)
-    all_peakv <- all_peakv[mplot$data][!is.na(GENE)]
-    all_peakv <- all_peakv[all_peakv[, .I[which.max(PBS)], by = GENE]$V1]
-    
-    # Plot genes
     mplot +
-      ggrepel::geom_text_repel(data = all_peakv, mapping = aes(x = position, y = PBS),
-                               label = all_peakv[, GENE], size = 2.5,
-                               vjust = 0.5, nudge_x = -0.35)
+      ggrepel::geom_label_repel(data = mgplot, mapping = aes(x = position, y = get(y.axis)),
+                               label = mgplot[, get(gene_col)], size = 2.5,
+                               vjust = 0.8, nudge_x = -0.35)
   }
   
 }
