@@ -11,7 +11,13 @@ mplot.add.genes(data, mplot, maxv_per_chr = T, all_peakv = T)
 
 \item{mplot}{description}
 
-\item{method}{maxv_per_chr or all_peakv}
+\item{gene_col}{description}
+
+\item{merge_col}{description}
+
+\item{by}{description}
+
+\item{label}{geom_text_repel or geom_label_repel}
 }
 \value{
 description
