@@ -7,13 +7,17 @@
 pbs_fst(geno.info, focal, close, outgroup, monomorphic_removal = T, method = "reynolds")
 }
 \arguments{
-\item{geno.info}{description}
+\item{plink}{description}
 
 \item{focal}{description}
 
 \item{close}{description}
 
 \item{outgroup}{description}
+
+\item{filter}{description}
+
+\item{maf}{description}
 
 \item{monomorphic_removal}{description}
 
