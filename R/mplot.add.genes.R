@@ -2,7 +2,7 @@
 #' 
 #' Description
 #' 
-#' @usage mplot.add.genes(data, mplot, maxv_per_chr = T, all_peakv = T)
+#' @usage mplot.add.genes(data, mplot, gene_col = "GENE", merge_col = "W_ID", by = "CHR", label = "geom_label_repel")
 #' 
 #' @param data description
 #' @param mplot description
@@ -31,7 +31,7 @@ mplot.add.genes <- function(data, mplot, gene_col = "GENE", merge_col = "W_ID", 
   }
   
   y.axis <- as.character(mplot$mapping$y[2])
-  mgplot <- merge(mplot$data, data[, .SD,, .SDcols = c(merge_col, gene_col)], by = merge_col, sort = F)
+  mgplot <- merge(data, mplot$data[, .SD,, .SDcols = c(merge_col, "position")], by = merge_col, sort = F)
   mgplot <- mgplot[mgplot[, .I[which.max(get(y.axis))], by = by]$V1]
   
   # Plot genes

@@ -4,7 +4,7 @@
 \alias{mplot.add.genes}
 \title{Title}
 \usage{
-mplot.add.genes(data, mplot, maxv_per_chr = T, all_peakv = T)
+mplot.add.genes(data, mplot, gene_col = "GENE", merge_col = "W_ID", by = "CHR", label = "geom_label_repel")
 }
 \arguments{
 \item{data}{description}

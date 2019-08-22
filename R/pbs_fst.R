@@ -22,23 +22,29 @@ pbs_fst <- function(plink, focal, close, outgroup, filter = "FID", maf = NULL, m
   
   # --- CHECKING ---- #
   
+  input <- paste0(plink, "_gdstatIn")
+  output <- paste0(plink, "_gdstatOut")
+  
   fam_file <- paste0(plink, ".fam")
   fam <- data.table::fread(fam_file)
   
-  clst_file <- paste0(plink, ".clst")
-  clst <- fam[, .(V1, V2)] %>%
-    set_names(c("FID", "ID"))
+  clst_file <- paste0(output, ".clst")
+  clst <- fam[, .(V1, V2)] %>% set_names(c("FID", "ID"))
+  clst <- clst[get(filter) %in% c(focal, close, outgroup)]
   
-  out <- paste0(plink, ".gdstat")
+  clst[, state := 'NA']
+  clst[get(filter) %in% focal, state := 'focal']
+  clst[get(filter) %in% close, state := 'close']
+  clst[get(filter) %in% outgroup, state := 'outgroup']
   
   # --- CHECKING ----
   
   # If Plink is installed on system path
-  gt::program_on_path("plink")  
+  program_on_path("plink")  
   
   # If pre-defined output file's name exists
-  if(file.exists(out))
-    stop("File ", out, " already exists. Please rename or delete it before running this function.")
+  if(file.exists(output))
+    stop("File ", output, " already exists. Please rename or delete it before running this function.")
   
   # Check method input
   if(!method %in% c("rwc", "wc"))
@@ -50,7 +56,7 @@ pbs_fst <- function(plink, focal, close, outgroup, filter = "FID", maf = NULL, m
   
   if(filter == "FID") {
     pops <- c(focal, close, outgroup)
-    pops_in_fam <- fam[, unique(V1)] %in% pops
+    pops_in_fam <- pops %in% fam[, unique(V1)]
     if(!all(pops_in_fam)) {
       stop("FID [", paste(pops[!pops_in_fam], collapse = ", "), "]", " no present on .fam Plink file!")
     }
@@ -67,7 +73,41 @@ pbs_fst <- function(plink, focal, close, outgroup, filter = "FID", maf = NULL, m
   } else {
     maf <- ifelse(is.null(maf), "", paste("--maf", maf))
   }
+  
+  ### COMMON FILTERS ####
+  
+  # Select target-individuals
+  fwrite(clst, clst_file, sep = " ", col.names = F)
 
+  # Extracting target-individuals & Filtering MAF
+  if (maf == "") {
+    plink(`--bfile` = plink, `--keep` = clst_file, "--keep-allele-order --allow-no-sex", "--make-bed", `--out` = input)
+  } else {
+    plink(`--bfile` = plink, maf, `--keep` = clst_file, "--keep-allele-order --allow-no-sex", "--make-bed", `--out` = input)
+  }
+  
+  # Calculate allele frequencies
+  if (monomorphic_removal | method == "rwc") {
+    
+    # Calculate allele frequencies
+    plink(`--bfile` = input, "--freq", `--within` = clst_file, "--keep-allele-order --allow-no-sex", "--make-bed", `--out` = output)
+    
+    # Load files
+    bim <- read.bim(paste0(output, ".bim"))
+    freq <- data.table::fread(paste0(output, ".frq.strat"))
+      
+    # Verify and update populations if necessary
+    # focal <- ifelse(filter == "FID", focal, "POP1")
+    # close <- ifelse(filter == "FID", close, "POP2")
+    # outgroup <- ifelse(filter == "FID", outgroup, "POP3")
+     
+    # Table all alleles frequencies
+    freq <- data.table::data.table(POP1 = freq[CLST == "focal", MAF],
+                                   POP2 = freq[CLST == "close", MAF],
+                                   POP3 = freq[CLST == "outgroup", MAF]
+    )
+  }
+  
   ### WEIR & COCKERHAM 1984 ####
   
   if(method == "wc") {
@@ -78,17 +118,17 @@ pbs_fst <- function(plink, focal, close, outgroup, filter = "FID", maf = NULL, m
     clst[get(filter) %in% close, state := 'close']
     
     data.table::fwrite(clst, clst_file, sep = " ", col.names = F)
-    gt::plink(`--bfile` = plink, '--fst', `--within` = clst_file, maf, "--allow-no-sex", `--out` = out)
-    pop1_vs_pop2 <- data.table::fread(paste0(out, ".fst"))
-
+    plink(`--bfile` = input, '--fst', `--within` = clst_file, "--keep-allele-order --allow-no-sex", `--out` = output)
+    pop1_vs_pop2 <- data.table::fread(paste0(output, ".fst"))
+    
     # Pop1 vs Pop3
     clst[, state := 'NA']
     clst[get(filter) %in% focal, state := 'focal']
     clst[get(filter) %in% outgroup, state := 'outgroup']
     
     data.table::fwrite(clst, clst_file, sep = " ", col.names = F)
-    gt::plink(`--bfile` = plink, '--fst', `--within` = clst_file, maf, "--allow-no-sex", `--out` = out)
-    pop1_vs_pop3 <- data.table::fread(paste0(out, ".fst"), select = "FST")
+    plink(`--bfile` = input, '--fst', `--within` = clst_file, "--keep-allele-order --allow-no-sex", `--out` = output)
+    pop1_vs_pop3 <- data.table::fread(paste0(output, ".fst"), select = "FST")
     
     # Pop2 vs Pop3
     clst[, state := 'NA']
@@ -96,8 +136,8 @@ pbs_fst <- function(plink, focal, close, outgroup, filter = "FID", maf = NULL, m
     clst[get(filter) %in% outgroup, state := 'outgroup']
     
     data.table::fwrite(clst, clst_file, sep = " ", col.names = F)
-    gt::plink(`--bfile` = plink, '--fst', `--within` = clst_file, maf, "--allow-no-sex", `--out` = out)
-    pop2_vs_pop3 <- data.table::fread(paste0(out, ".fst"), select = "FST")
+    plink(`--bfile` = input, '--fst', `--within` = clst_file, "--keep-allele-order --allow-no-sex", `--out` = output)
+    pop2_vs_pop3 <- data.table::fread(paste0(output, ".fst"), select = "FST")
     
     # Load fst files
     pbs_fst <- data.table::data.table (
@@ -117,64 +157,27 @@ pbs_fst <- function(plink, focal, close, outgroup, filter = "FID", maf = NULL, m
     # Removing monomorphic alleles in at least two populations
     if(monomorphic_removal) {
       
-      m0 <- pbs_fst[, lapply(.SD, function(.) . == 0L), .SDcols = 4:6][, I := .I][]
-      m0 <- m0[, M := sum(c(focal.close.fst, focal.outgroup.fst, close.outgroup.fst)), by = I][, M >= 2L]
+      m0 <- freq[, lapply(.SD, function(.) . == 0L)][, I := .I]
+      m0 <- m0[, M := sum(c(POP1, POP2, POP3)), by = I][, M >= 2L]
       
-      m1 <- pbs_fst[, lapply(.SD, function(.) . == 1L), .SDcols = 4:6][, I := .I][]
-      m1 <- m1[, M := sum(c(focal.close.fst, focal.outgroup.fst, close.outgroup.fst)), by = I][, M >= 2L]
+      m1 <- freq[, lapply(.SD, function(.) . == 1L)]
+      m1 <- m1[, I := .I][, M := sum(c(POP1, POP2, POP3)), by = I][, M >= 2L]
       
       mono <- !(m0 | m1)
       cat(" ", sum(!mono), "monomorphic alleles were removed!\n")
       
       pbs_fst <- pbs_fst[mono]
-      
+
     }
     
     # Calculate PBS
     pbs_fst[, PBS := ( (-log(1L - POP1.POP2.FST)) + (-log(1L - POP1.POP3.FST)) - (-log(1L - POP2.POP3.FST)) ) / 2L]
-    pbs_fst[PBS < 0 | is.na(PBS), PBS := 0L]
+    pbs_fst[PBS < 0 | is.na(PBS), PBS := 0L][]
   }
   
   #### REYNOLDS & COCKERHAM 1983 ####
   
   if(method == "rwc") {
-    
-    # Write cluster file
-    clst[, state := 'NA']
-    clst[get(filter) %in% focal, state := 'focal']
-    clst[get(filter) %in% close, state := 'close']
-    clst[get(filter) %in% outgroup, state := 'outgroup']
-    data.table::fwrite(clst, clst_file, sep = " ", col.names = F)
-    
-    # Calculate Allele Frequencies
-    if(maf != "") {
-      gt::plink(`--bfile` = plink, maf, "--allow-no-sex", "--make-bed", `--out` = out)
-      gt::plink(`--bfile` = out, "--freq", `--within` = clst_file, "--allow-no-sex", `--out` = out)
-    } else {
-      gt::plink(`--bfile` = plink, "--freq", `--within` = clst_file, "--allow-no-sex", `--out` = out)
-    }
-    
-    # Load files
-    bim <- gt::read.bim(paste0(plink, ".bim"))
-    freq <- data.table::fread(paste0(out, ".frq.strat"))
-    
-    bim <- merge(bim[, .(CHR, SNP, POS)], freq[, .(CHR, SNP)], by = c("CHR", "SNP"), sort = F) %>%
-      unique()
-    
-    if(nrow(bim) != nrow(freq[CLST == unique(CLST)[1]])) {
-      stop("Number of rows in bim in freq files differ.")
-    }
-    
-    # Verify and update populations if necessary
-    focal <- ifelse(filter == "FID", focal, "POP1")
-    close <- ifelse(filter == "FID", close, "POP2")
-    outgroup <- ifelse(filter == "FID", outgroup, "POP3")
-    
-    # Table all alleles frequencies
-    freq <- data.table::data.table(POP1 = freq[CLST == "focal", MAF],
-                                   POP2 = freq[CLST == "close", MAF],
-                                   POP3 = freq[CLST == "outgroup", MAF]
-    )
     
     # Removing monomorphic alleles in at least two populations
     if(monomorphic_removal) {
@@ -210,9 +213,12 @@ pbs_fst <- function(plink, focal, close, outgroup, filter = "FID", maf = NULL, m
     freq[PBS < 0 | is.na(PBS), PBS := 0] # set to 0 negative values
     
     # Save object
-    pbs_fst <- cbind(bim, freq)
+    pbs_fst <- cbind(bim[, .(CHR, SNP, POS)], freq)
     
   }
+  
+  files <- c(".bed", ".bim", ".fam", ".log", ".nosex", ".frq.strat", ".fst", ".clst", "*~")
+  unlink(c(paste0(input, files), paste0(output, files)))
   
   return(pbs_fst)
   
