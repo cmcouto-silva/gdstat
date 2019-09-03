@@ -22,7 +22,7 @@ manhattan_plot <- function(pbs_data, col_name, fig_name = NULL, facet_key = NULL
   
   pos_shift <- pbs_dt[, round(0.2 * .N / NCHR)]
   pbs_dt[, position := position + (CHR - 1) * pos_shift]
-  pbs_th <- quantile(pbs_dt[[col_name]], seq(0.995,0.999,0.001), na.rm = T)[c(1,5)]
+  # pbs_th <- quantile(pbs_dt[[col_name]], seq(0.995,0.999,0.001), na.rm = T)[c(1,5)]
   
   b_info <- pbs_dt[, .(breaks = 0.5 * (first(position) + last(position))), by = CHR]
   
@@ -44,8 +44,8 @@ manhattan_plot <- function(pbs_data, col_name, fig_name = NULL, facet_key = NULL
           legend.position = "none") + 
     labs(x = "chromosome") +
     scale_x_continuous(breaks = unlist(b_info[, breaks]), 
-                       label = unlist(b_info[, CHR])) +
-    geom_hline(yintercept = pbs_th, lty = 2, col = gray(.1))
+                       label = unlist(b_info[, CHR])) #+
+    # geom_hline(yintercept = pbs_th, lty = 2, col = gray(.1))
   
   if(!is.null(facet_key))
     gm <- gm +

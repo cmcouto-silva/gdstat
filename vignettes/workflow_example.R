@@ -13,13 +13,10 @@ devtools::load_all()
 ####################################################################################################!
 
 # Common Arguments
-
 plink <- "~/cmcouto.silva@usp.br/lab_files/datasets/SHGDP/unphased/chr2"
-# target_snp <- 109513601
+target_snps <- c("2:109513601", "11:61597212", "11:61580635")
 
-fread(paste0(plink, ".fam"))[, unique(V1)]
-
-focal <- "America"
+focal <- "EastAsia"
 close <- "WestEurasia"
 outgroup <- "Africa"
 
@@ -56,14 +53,12 @@ pbs[LOG_PVALUE < 0, LOG_PVALUE := 0]
 pbs[LOG_PVALUE >= 2]
 
 # Getting peaks
-pbs_peaks <- pbs_mean[LOG_PVALUE >= 2]
-update_fields(DT = pbs, rolling_DT = pbs_peaks, col = "LOG_PVALUE") # get biggest PBS and related-info by window
-pbs_peaks_nocons_windows <- exclude_consecutive_windows(pbs_mean_peaks) # exclude consecutive windows
+pbs_peaks <- pbs[LOG_PVALUE >= 2]
 
 # Plotting
 mplot <- manhattan_plot(pbs_data = pbs, col_name = 'LOG_PVALUE')
-mgplot <- mplot.add.genes(data = pbs_peaks_nocons_windows, mplot = mplot, by = "CHR", merge_col = "SNP", label = "geom_label_repel")
-mpplot <- mplot.add.points(DT = pbs, rolling_DT = NULL, mplot = mgplot, target_snp = "2:109513601", merge_col = "SNP", uniq = F)
+mgplot <- mplot.add.genes(data = pbs_peaks, mplot = mplot, by = "CHR", merge_col = "SNP", label = "geom_label_repel")
+mpplot <- mplot.add.points(DT = pbs, rolling_DT = NULL, mplot = mgplot, target_snp = target_snps, merge_col = "SNP", uniq = F)
 mpplot
 
 # --- SNP Mean --- #
@@ -82,8 +77,11 @@ pbs_mean_peaks <- pbs_mean[LOG_PVALUE >= 2]
 update_fields(DT = pbs, rolling_DT = pbs_mean_peaks, col = "LOG_PVALUE") # get biggest PBS and related-info by window
 pbs_mean_peaks_nocons_windows <- exclude_consecutive_windows(pbs_mean_peaks) # exclude consecutive windows
 
+pos <- pbs[, which(SNP %in% target_snps)]
+pbs[pos:(pos+20)]
+
 # RollingMean
 mplot <- manhattan_plot(pbs_data = pbs_mean, col_name = 'LOG_PVALUE')
 mgplot <- mplot.add.genes(data = pbs_mean_peaks_nocons_windows, mplot = mplot, by = "CHR", label = "geom_label_repel")
-mpplot <- mplot.add.points(DT = pbs, rolling_DT = pbs_mean, mplot = mgplot, target_snp = "2:109513601", merge_col = "W_ID", uniq = F)
+mpplot <- mplot.add.points(DT = pbs, rolling_DT = pbs_mean, mplot = mgplot, target_snp = target_snps, merge_col = "W_ID", uniq = F)
 mpplot
