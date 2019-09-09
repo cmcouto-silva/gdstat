@@ -62,6 +62,7 @@ pbs_fst <- function(plink, focal, close, outgroup, filter = "FID", maf = NULL, m
     }
   } else {
     pops <- c(focal, close, outgroup)
+    pops_in_fam <- pops %in% fam[, unique(V1)]
     if(!all(pops_in_fam)) {
       warning("Not all IDs on .fam Plink file!")
     }
