@@ -16,7 +16,8 @@
 #' @import data.table ggplot2
 #' @export
 
-mplot.add.genes <- function(data, mplot, gene_col = "GENE", merge_col = "W_ID", by = "CHR", label = "geom_label_repel") {
+mplot.add.genes <- function(data, mplot, gene_col = "GENE", merge_col = "W_ID", by = "CHR", label = "geom_label_repel",
+                            log_pvalue = 2) {
   
   # if(!any(grepl(col, colnames(data)))) {
   #   stop("Column name does not match with any column in data.")
@@ -32,7 +33,7 @@ mplot.add.genes <- function(data, mplot, gene_col = "GENE", merge_col = "W_ID", 
   
   y.axis <- as.character(mplot$mapping$y[2])
   mgplot <- merge(data, mplot$data[, .SD,, .SDcols = c(merge_col, "position")], by = merge_col, sort = F)
-  mgplot <- mgplot[mgplot[, .I[which.max(get(y.axis))], by = by]$V1]
+  mgplot <- mgplot[mgplot[, .I[which.max(get(y.axis))], by = by]$V1][LOG_PVALUE >= log_pvalue]
   
   # Plot genes
   if(label == "geom_text_repel") {
