@@ -10,6 +10,7 @@
 #' @param outgroup description
 #' @param filter description
 #' @param maf description
+#' @param nchrobs description
 #' @param monomorphic_removal description
 #' @param method description
 #' 
@@ -18,7 +19,7 @@
 #' @import data.table magrittr
 #' @export
 
-pbs_fst <- function(plink, focal, close, outgroup, filter = "FID", maf = NULL, monomorphic_removal = F, method = "rwc") {
+pbs_fst <- function(plink, focal, close, outgroup, filter = "FID", maf = NULL, nchrobs = NULL, monomorphic_removal = F, method = "rwc") {
   
   # --- CHECKING ---- #
   
@@ -85,6 +86,18 @@ pbs_fst <- function(plink, focal, close, outgroup, filter = "FID", maf = NULL, m
     plink(`--bfile` = plink, `--keep` = clst_file, "--keep-allele-order --allow-no-sex", "--make-bed", `--out` = input)
   } else {
     plink(`--bfile` = plink, maf, `--keep` = clst_file, "--keep-allele-order --allow-no-sex", "--make-bed", `--out` = input)
+  }
+  
+  # Remove SNPs with too many missing data
+  if(!is.null(nchrobs)) {
+    # find SNPs with chromosome observations less than nchrobs
+    plink(`--bfile` = plink, `--keep` = clst_file, '--freq --within', clst_file, `--out` = input)
+    frq.strat <- fread(paste0(input, ".frq.strat"))
+    snp_list <- frq.strat[NCHROBS >= nchrobs, unique(SNP)]
+    writeLines(snp_list, paste0(input, "_SNPs.txt"))
+    # remove those SNPs
+    plink(`--bfile` = plink, `--keep` = clst_file, `--extract` = paste0(input, "_SNPs.txt"),
+          "--keep-allele-order --allow-no-sex", "--make-bed", `--out` = input)
   }
   
   # Calculate allele frequencies

@@ -19,6 +19,8 @@ pbs_fst(geno.info, focal, close, outgroup, monomorphic_removal = T, method = "re
 
 \item{maf}{description}
 
+\item{nchrobs}{description}
+
 \item{monomorphic_removal}{description}
 
 \item{method}{description}
