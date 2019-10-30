@@ -5,8 +5,9 @@ update_fields <- function(DT, rolling_DT, col = "PBS", window_s = 20, step_s = 5
   
   for(i in rolling_DT[, W_ID]) {
     rolling_DT[W_ID == i, `:=`(
-      colnames(DT),
-      DT[ref_idx[wid == i, seq(from, to)]][DT[ref_idx[wid == i, seq(from, to)], which.max(get(col))]][, .SD, .SDcols = colnames(DT)]
+      setdiff(colnames(DT), c("P_VALUE", "LOG_PVALUE")),
+      DT[ref_idx[wid == i, seq(from, to)], .SD, .SDcols = setdiff(colnames(DT), c("P_VALUE", "LOG_PVALUE"))][
+        DT[ref_idx[wid == i, seq(from, to)], which.max(get(col))]]
     )]
   }
 }
