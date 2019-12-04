@@ -91,7 +91,7 @@ pbs_fst <- function(plink, focal, close, outgroup, filter = "FID", maf = NULL, n
   # Remove SNPs with too many missing data
   if(!is.null(nchrobs)) {
     # find SNPs with chromosome observations less than nchrobs
-    plink(`--bfile` = plink, `--keep` = clst_file, '--freq --within', clst_file, `--out` = input)
+    plink(`--bfile` = plink, `--keep` = clst_file, '--allow-no-sex --freq --within', clst_file, `--out` = input)
     frq.strat <- fread(paste0(input, ".frq.strat"))
     snp_list <- frq.strat[NCHROBS >= nchrobs, unique(SNP)]
     writeLines(snp_list, paste0(input, "_SNPs.txt"))
@@ -234,6 +234,7 @@ pbs_fst <- function(plink, focal, close, outgroup, filter = "FID", maf = NULL, n
   files <- c(".bed", ".bim", ".fam", ".log", ".nosex", ".frq.strat", ".fst", ".clst", "*~")
   unlink(c(paste0(input, files), paste0(output, files)))
   
+  pbs_fst[is.infinite(PBS), PBS := 0][]
   return(pbs_fst)
   
 }
