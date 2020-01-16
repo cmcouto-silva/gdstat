@@ -13,11 +13,17 @@ mplot.add.genes(data, mplot, gene_col = "GENE", merge_col = "W_ID", by = "CHR", 
 
 \item{gene_col}{description}
 
+\item{skip_empty_genes}{description}
+
 \item{merge_col}{description}
 
 \item{by}{description}
 
 \item{label}{geom_text_repel or geom_label_repel}
+
+\item{log_pvalue}{description}
+
+\item{...}{additional parameters for ggrepel functions}
 }
 \value{
 description
