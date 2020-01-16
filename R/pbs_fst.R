@@ -231,7 +231,7 @@ pbs_fst <- function(plink, focal, close, outgroup, filter = "FID", maf = NULL, n
     
   }
   
-  files <- c(".bed", ".bim", ".fam", ".log", ".nosex", ".frq.strat", ".fst", ".clst", ".txt", "*~")
+  files <- c(".bed", ".bim", ".fam", ".log", ".nosex", ".frq.strat", ".fst", ".clst", "_SNPs.txt", "*~")
   unlink(c(paste0(input, files), paste0(output, files)))
   
   pbs_fst[is.infinite(PBS), PBS := 0][]
