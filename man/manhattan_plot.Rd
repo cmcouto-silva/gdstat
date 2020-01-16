@@ -14,6 +14,8 @@ manhattan_plot(pbs_data, col_name, fig_name = NULL, facet_key = NULL)
 \item{fig_name}{description}
 
 \item{facet_key}{description}
+
+\item{point_size}{description}
 }
 \value{
 description

@@ -8,13 +8,14 @@
 #' @param col_name description
 #' @param fig_name description
 #' @param facet_key description
+#' @param point_size description
 #' 
 #' @return description
 #' 
 #' @import data.table
 #' @export
 
-manhattan_plot <- function(pbs_data, col_name, fig_name = NULL, facet_key = NULL) {
+manhattan_plot <- function(pbs_data, col_name, fig_name = NULL, facet_key = NULL, point_size = 0.5) {
   
   pbs_dt <- copy(pbs_data)
   pbs_dt[, position := .GRP, keyby = .(CHR, POS)]
@@ -36,7 +37,7 @@ manhattan_plot <- function(pbs_data, col_name, fig_name = NULL, facet_key = NULL
   # Plotting
   par(cex=2.5)
   gm <- ggplot2::ggplot(pbs_dt, aes_string(x = "position", y = col_name) ) + 
-    geom_point(aes(color = color), size = 0.5) +
+    geom_point(aes(color = color), size = point_size) +
     theme_bw(base_family = "arial", base_size = 12L) + 
     theme(panel.grid = element_blank(),
           panel.border = element_blank(),
@@ -45,7 +46,7 @@ manhattan_plot <- function(pbs_data, col_name, fig_name = NULL, facet_key = NULL
     labs(x = "chromosome") +
     scale_x_continuous(breaks = unlist(b_info[, breaks]), 
                        label = unlist(b_info[, CHR])) #+
-    # geom_hline(yintercept = pbs_th, lty = 2, col = gray(.1))
+  # geom_hline(yintercept = pbs_th, lty = 2, col = gray(.1))
   
   if(!is.null(facet_key))
     gm <- gm +
